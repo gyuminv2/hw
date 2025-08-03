@@ -2,10 +2,10 @@ import java.util.*;
 
 class Solution {
     
-    public void dfs(int node, boolean[] v, int[][] computers) {
-        v[node] = true;
+    public void dfs(int idx, boolean[] v, int[][] computers) {
+        v[idx] = true;
         for (int i = 0; i < computers.length; i++) {
-            if (computers[node][i] == 1 && !v[i]) dfs(i, v, computers);
+            if (computers[idx][i] == 1 && !v[i]) dfs(i, v, computers);
         }
     }
     
