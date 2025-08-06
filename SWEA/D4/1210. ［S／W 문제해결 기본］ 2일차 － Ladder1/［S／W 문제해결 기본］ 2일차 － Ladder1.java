@@ -23,6 +23,25 @@ public class Solution {
         return 0 <= i && i < 100 && 0 <= j && j < 100;
     }
 
+    static int dfs(Pos end) {
+        int ci = end.row;
+        int cj = end.col;
+
+        if (ci == 0) return cj;
+
+        visited[ci][cj] = true;
+        for (int d = 0; d < 3; d++) {
+            int ni = ci + dis[d];
+            int nj = cj + djs[d];
+            if (inRange(ni, nj) && !visited[ni][nj] && grid[ni][nj] == 1) {
+                int res = dfs(new Pos(ni, nj));
+                if (res != -1)
+                    return res;
+            }
+        }
+        return -1;
+    }
+
     static int bfs(Pos end) {
         int ei = end.row;
         int ej = end.col;
@@ -70,7 +89,8 @@ public class Solution {
                     if (grid[i][j] == 2) end = new Pos(i, j);
                 }
             }
-            System.out.println("#" + tc + " " + bfs(end));
+//            System.out.println("#" + tc + " " + bfs(end));
+            System.out.println("#" + tc + " " + dfs(end));
         }
     }
 }
