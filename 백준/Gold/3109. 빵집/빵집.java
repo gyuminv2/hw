@@ -8,10 +8,6 @@ public class Main {
     static int[] dr = {-1, 0, 1};
     static int answer;
 
-    static boolean inRange(int i, int j) {
-        return 0 < i && i < R && 0 < j && j < C;
-    }
-
     static boolean dfs(int r, int c) {
         grid[r][c] = 'x';
 
@@ -23,7 +19,7 @@ public class Main {
             int nr = r + dr[i];
             int nc = c + 1;
 
-            if (nr >= 0 && nr < R && grid[nr][nc] == '.') {
+            if (0 <= nr && nr < R && grid[nr][nc] == '.') {
                 if (dfs(nr, nc)) {
                     return true;
                 }
@@ -33,7 +29,7 @@ public class Main {
         return false;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         R = Integer.parseInt(st.nextToken());
