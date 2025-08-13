@@ -4,41 +4,72 @@ import java.util.*;
 public class Solution {
 
     static int N;
-    static int[] chu;
-    static boolean[] v;
-    static int rtn;
-
-    static void go(int cnt, int left, int right) {
-        if (cnt == N) {
-            rtn++;
-            return;
-        }
-        for (int i = 0; i < N; i++) {
-            if (!v[i]) {
-                v[i] = true;
-                go(cnt+1, left + chu[i], right);
-                if (left >= right + chu[i])  go(cnt+1, left, right + chu[i]);
-                v[i] = false;
-            }
-        }
-    }
+    static int[] chu; // 현재 순열을 담을 배열
+    static int answer;
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int tc = Integer.parseInt(br.readLine());
-        for (int t = 1; t <= tc; t++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            N = Integer.parseInt(st.nextToken());
-            chu = new int[N];
-            st = new StringTokenizer(br.readLine());
-            for (int i = 0; i < N; i++)  chu[i] = Integer.parseInt(st.nextToken());
-            v = new boolean[N];
-            rtn = 0;
+        int T = Integer.parseInt(br.readLine());
+        for (int tc = 1; tc <= T; tc++) {
 
-            go(0, 0, 0);
-            System.out.println("#" + t + " " + rtn);
+            N = Integer.parseInt(br.readLine());
+            chu = new int[N];
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for (int i = 0; i < N; i++) {
+                chu[i] = Integer.parseInt(st.nextToken());
+            }
+
+            answer = 0;
+
+            Arrays.sort(chu);
+
+            do {
+                solve(0, 0, 0);
+            } while (nextPermutation(chu));
+
+            System.out.println("#" + tc + " " + answer);
         }
+    }
+
+    static void solve(int count, int leftSum, int rightSum) {
+        if (count == N) {
+            answer++;
+            return;
+        }
+
+        solve(count + 1, leftSum + chu[count], rightSum);
+
+        if (rightSum + chu[count] <= leftSum) {
+            solve(count + 1, leftSum, rightSum + chu[count]);
+        }
+    }
+
+    static boolean nextPermutation(int[] arr) {
+        int i = N - 1;
+        while (i > 0 && arr[i - 1] >= arr[i]) {
+            i--;
+        }
+        if (i == 0) return false;
+
+        int j = N - 1;
+        while (arr[i - 1] >= arr[j]) {
+            j--;
+        }
+
+        swap(arr, i - 1, j);
+
+        int k = N - 1;
+        while (i < k) {
+            swap(arr, i++, k--);
+        }
+        return true;
+    }
+
+    static void swap(int[] arr, int a, int b) {
+        int temp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = temp;
     }
 }
