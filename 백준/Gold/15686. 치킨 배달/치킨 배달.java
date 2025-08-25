@@ -2,60 +2,74 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int N, M;
-    static int[][] city;
-    static List<int[]> chicken = new ArrayList<>();
-    static List<int[]> house = new ArrayList<>();
-    static List<Integer> selected = new ArrayList<>();
-    static int minDistance = Integer.MAX_VALUE;
 
-    public static void main(String[] args) throws IOException {
+    static int N, M;
+    static int[][] grid;
+    static ArrayList<Point> home;
+    static ArrayList<Point> chicken;
+    static ArrayList<Integer> selected;
+    static int ans;
+
+    static class Point {
+        int i;
+        int j;
+        Point(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    static void backtrack(int start, int cnt) {
+        if (cnt == M) {
+            int sum = 0;
+            for (Point p : home) {
+                int min = Integer.MAX_VALUE;
+                for (Integer i : selected) {
+                    int ci = chicken.get(i).i;
+                    int cj = chicken.get(i).j;
+                    min = Math.min(min, Math.abs(p.i - ci) + Math.abs(p.j - cj));
+                }
+                sum += min;
+            }
+            ans = Math.min(ans, sum);
+            return;
+        }
+        for (int i = start; i < chicken.size(); i++ ) {
+            selected.add(i);
+            backtrack(i + 1, cnt + 1);
+            selected.remove(selected.size() - 1);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
         StringTokenizer st = new StringTokenizer(br.readLine());
+
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-
-        city = new int[N][N];
+        grid = new int[N][N];
+        home = new ArrayList<>();
+        chicken = new ArrayList<>();
+        selected = new ArrayList<>();
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
-                city[i][j] = Integer.parseInt(st.nextToken());
-                if (city[i][j] == 1) {
-                    house.add(new int[]{i, j});
-                } else if (city[i][j] == 2) {
-                    chicken.add(new int[]{i, j});
+                grid[i][j] = Integer.parseInt(st.nextToken());
+                if (grid[i][j] == 1) {
+                    home.add(new Point(i, j));
+                }
+                if (grid[i][j] == 2) {
+                    chicken.add(new Point(i, j));
                 }
             }
         }
 
-        dfs(0, 0);
-        System.out.println(minDistance);
-    }
+        ans = Integer.MAX_VALUE;
 
-    static void dfs(int index, int count) {
-        if (index > chicken.size()) return;
+        backtrack(0, 0);
 
-        if (count == M) {
-            int totalDistance = 0;
-            for (int[] h : house) {
-                int distance = Integer.MAX_VALUE;
-                for (int idx : selected) {
-                    int[] ch = chicken.get(idx);
-                    int dist = Math.abs(ch[0] - h[0]) + Math.abs(ch[1] - h[1]);
-                    distance = Math.min(distance, dist);
-                }
-                totalDistance += distance;
-            }
-            minDistance = Math.min(minDistance, totalDistance);
-            return;
-        }
-
-        if (index < chicken.size()) {
-            selected.add(index);
-            dfs(index + 1, count + 1);
-            selected.remove(selected.size() - 1);
-
-            dfs(index + 1, count);
-        }
+        System.out.println(ans);
     }
 }
