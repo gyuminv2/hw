@@ -31,6 +31,31 @@ public class Solution {
         }
     }
 
+    static void perm(int cnt, int distance) {
+        if (min <= distance) return ;
+
+        if (cnt == N) {
+            distance += Math.abs(customers.get(a[N-1])[1] - home[1]) + Math.abs(customers.get(a[N-1])[0] - home[0]);
+            min = Math.min(min, distance);
+            return ;
+        }
+        for (int i = 0; i < N; i++) {
+            if (!v[i]) {
+                v[i] = true;
+                a[cnt] = i;
+                int nDistance;
+                if (cnt == 0)
+                    nDistance = Math.abs(job[1] - customers.get(a[0])[1]) + Math.abs(job[0] - customers.get(a[0])[0]);
+                else {
+                    int prev = a[cnt-1];
+                    nDistance = Math.abs(customers.get(i)[1] - customers.get(prev)[1]) + Math.abs(customers.get(i)[0] - customers.get(prev)[0]);
+                }
+                perm(cnt + 1, distance + nDistance);
+                v[i] = false;
+            }
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -57,7 +82,8 @@ public class Solution {
             v = new boolean[N];
             min = Integer.MAX_VALUE;
 
-            perm(0);
+//            perm(0);
+            perm(0, 0);
 
             System.out.println("#" + tc + " " + min);
 
