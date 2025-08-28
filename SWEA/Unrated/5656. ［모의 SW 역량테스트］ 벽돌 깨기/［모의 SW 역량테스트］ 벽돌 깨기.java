@@ -48,6 +48,9 @@ public class Solution {
         boolean[][] visited = new boolean[H][W];
         visited[si][sj] = true;
 
+        List<int[]> destroy = new ArrayList<>();
+        destroy.add(new int[] {si, sj});
+
         while (!q.isEmpty()) {
             int[] cur = q.poll();
             int ci = cur[0];
@@ -61,15 +64,19 @@ public class Solution {
                     if (inRange(ni, nj) && nGrid[ni][nj] > 0 && !visited[ni][nj]) {
                         visited[ni][nj] = true;
                         q.offer(new int[] {ni, nj});
+                        destroy.add(new int[] {ni, nj});
                     }
                 }
             }
         }
 
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < W; j++) {
-                if (visited[i][j]) nGrid[i][j] = 0;
-            }
+//        for (int i = 0; i < H; i++) {
+//            for (int j = 0; j < W; j++) {
+//                if (visited[i][j]) nGrid[i][j] = 0;
+//            }
+//        }
+        for (int[] dest : destroy) {
+            nGrid[dest[0]][dest[1]] = 0;
         }
     }
 
@@ -90,6 +97,8 @@ public class Solution {
     }
 
     static void perm(int cnt, int[] beads) {
+        if (min == 0) return;
+
         if (cnt == N) {
             int[][] nGrid = new int[H][W];
             for (int i = 0; i < H; i++) nGrid[i] = grid[i].clone();
