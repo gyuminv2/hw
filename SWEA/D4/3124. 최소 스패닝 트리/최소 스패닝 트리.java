@@ -4,63 +4,62 @@ import java.util.*;
 public class Solution {
 
     static int V, E;
-    static ArrayList<Edge> edgeList;
-    static int[] parent;
+    static ArrayList<Edge>[] edgeList;
+    static boolean[] v;
 
     static class Edge {
-        int from, to;
-        long cost;
+        int to, cost;
 
-        Edge(int from, int to, long cost) {
-            this.from = from;
+        Edge(int to, int cost) {
             this.to = to;
             this.cost = cost;
         }
     }
 
-    static int find(int x) {
-        if (parent[x] == x) return x;
-        return parent[x] = find(parent[x]);
-    }
-
-    static boolean union(int a, int b) {
-        int rootA = find(a);
-        int rootB = find(b);
-        if (rootA == rootB) return false;
-        parent[rootB] = rootA;
-        return true;
-    }
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine().trim());
         StringTokenizer st;
 
-        int T = Integer.parseInt(br.readLine());
         for (int tc = 1; tc <= T; tc++) {
-            st = new StringTokenizer(br.readLine());
+            st = new StringTokenizer(br.readLine().trim());
+
             V = Integer.parseInt(st.nextToken());
             E = Integer.parseInt(st.nextToken());
-            edgeList = new ArrayList<>();
+            edgeList = new ArrayList[V+1];
+            for (int i = 1; i <= V; i++) edgeList[i] = new ArrayList<>();
             for (int i = 0; i < E; i++) {
                 st = new StringTokenizer(br.readLine());
                 int a = Integer.parseInt(st.nextToken());
                 int b = Integer.parseInt(st.nextToken());
-                long c = Long.parseLong(st.nextToken());
-                edgeList.add(new Edge(a, b, c));
+                int c = Integer.parseInt(st.nextToken());
+                edgeList[a].add(new Edge(b, c));
+                edgeList[b].add(new Edge(a, c));
             }
-            parent = new int[V+1];
-            for (int i = 1; i < V+1; i++) parent[i] = i;
+            v = new boolean[V+1];
+            PriorityQueue<Edge> pq = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.cost, o2.cost));
+            long mst = 0;
+            int cnt = 0;
 
-            edgeList.sort((o1, o2) -> Long.compare(o1.cost, o2.cost));
+            pq.offer(new Edge(1, 0));
 
-            long mst = 0, cnt = 0;
-            for (Edge e : edgeList) {
-                if (union(e.from, e.to)) {
-                    mst += e.cost;
-                    if (++cnt == V-1) break;
+            while (!pq.isEmpty()) {
+                Edge cur = pq.poll();
+                int to = cur.to;
+                int cost = cur.cost;
+
+                if (v[to]) continue;
+
+                v[to] = true;
+                mst += cost;
+                if (++cnt == V) break;
+
+                for (Edge e : edgeList[to]) {
+                    if (!v[e.to]) {
+                        pq.offer(e);
+                    }
                 }
             }
-
             System.out.println("#" + tc + " " + mst);
         }
     }
