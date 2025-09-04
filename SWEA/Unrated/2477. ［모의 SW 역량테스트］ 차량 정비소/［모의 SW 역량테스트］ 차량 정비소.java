@@ -92,7 +92,7 @@ public class Solution {
         // 고객 전부 끝날 때 까지
         while (finished < K) {
             // 1. 고객이 접수 대기열로 들어온다.
-            while (cIdx < K && everyone.get(cIdx).startTime <= time) {
+            while (cIdx < K && everyone.get(cIdx).startTime == time) {
                 waitJupsuQ.add(everyone.get(cIdx));
                 cIdx++;
             }
@@ -100,7 +100,7 @@ public class Solution {
             // 2. 접수 끝났으면 정비 대기열로 들어간다.
             for (int i = 1; i <= N; i++) {
                 if (jupsu[i] != null) {
-                    if (jupsu[i].jupsuEndTime <= time) {
+                    if (jupsu[i].jupsuEndTime == time) {
                         waitJungbiQ.add(jupsu[i]);
                         jupsu[i] = null;
                     }
@@ -110,7 +110,7 @@ public class Solution {
             // 3. 정비 끝났으면 나감
             for (int j = 1; j <= M; j++) {
                 if (jungbi[j] != null) {
-                    if (jungbi[j].jupsuEndTime + b[j] <= time) {
+                    if (jungbi[j].jupsuEndTime + b[j] == time) {
                         jungbi[j] = null;
                         finished++;
                     }
