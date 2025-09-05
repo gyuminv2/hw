@@ -3,68 +3,67 @@ import java.util.*;
 
 public class Main {
 
-    static long N, M, K, sqrtN;
-    static long[] arr;
-    static long[] buk;
+    static int n;
+    static long[] a;
+    static long[] tree;
 
-    static void init() {
-        sqrtN = (long)Math.sqrt(N);
-        for (long i = 1; i <= N; i++) {
-            buk[(int)(i/sqrtN)] += arr[(int)i];
+    // i번째 수까지의 누적 합을 계산하는 함수
+    static long sum(int i) {
+        long ans = 0;
+        while (i > 0) {
+            ans += tree[i];
+            i -= (i & -i); // 마지막 1비트만큼 빼면서 다음 구간으로 이동
+        }
+        return ans;
+    }
+
+    // i번째 수를 diff만큼 변화시켰을 때, 관련 구간들을 업데이트하는 함수
+    static void update(int i, long diff) {
+        while (i <= n) {
+            tree[i] += diff;
+            i += (i & -i); // 마지막 1비트만큼 더하면서 상위 구간으로 이동
         }
     }
 
-    static void update(long x, long val) {
-        long idx = x / sqrtN;
-        buk[(int)idx] -= arr[(int)x];
-        buk[(int)idx] += val;
-        arr[(int)x] = val;
-    }
-
-    static long sum(long l, long r) {
-        long ret = 0;
-
-        while (l%sqrtN != 0 && l <= r) {
-            ret += arr[(int)l];
-            l++;
-        }
-        while ((r+1)%sqrtN != 0 && l <= r) {
-            ret += arr[(int)r];
-            r--;
-        }
-        while (l <= r) {
-            ret += buk[(int)(l/sqrtN)];
-            l += sqrtN;
-        }
-        return ret;
-    }
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = Long.parseLong(st.nextToken());
-        M = Long.parseLong(st.nextToken());
-        K = Long.parseLong(st.nextToken());
-        arr = new long[(int)N+1];
-        for (int i = 1; i <= N; i++) {
-            st = new StringTokenizer(br.readLine());
-            arr[i] = Long.parseLong(st.nextToken());
-        }
-        buk = new long[(int)N*4];
+        n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        int k = Integer.parseInt(st.nextToken());
 
-        init();
-        for (long i = N+2; i <= N+M+K+1; i++) {
-            st = new StringTokenizer(br.readLine());
-            long a = Long.parseLong(st.nextToken());
-            long b = Long.parseLong(st.nextToken());
-            long c = Long.parseLong(st.nextToken());
-            // update
-            if (a == 1) update(b, c);
-            // prlong
-            else System.out.println(sum(b, c));
+        a = new long[n + 1];
+        tree = new long[n + 1];
+
+        // 초기 배열 값으로 펜윅 트리 구성
+        for (int i = 1; i <= n; i++) {
+            a[i] = Long.parseLong(br.readLine());
+            update(i, a[i]);
         }
 
+        StringBuilder sb = new StringBuilder();
+        int commands = m + k;
 
+        while (commands-- > 0) {
+            st = new StringTokenizer(br.readLine());
+            int t1 = Integer.parseInt(st.nextToken());
+
+            if (t1 == 1) {
+                // 값 변경
+                int t2 = Integer.parseInt(st.nextToken());
+                long t3 = Long.parseLong(st.nextToken());
+                long diff = t3 - a[t2]; // 변화량 계산
+                a[t2] = t3; // 원래 배열 값 변경
+                update(t2, diff); // 펜윅 트리 업데이트
+            } else {
+                // 구간 합 출력
+                int t2 = Integer.parseInt(st.nextToken());
+                int t3 = Integer.parseInt(st.nextToken());
+                long result = sum(t3) - sum(t2 - 1);
+                sb.append(result).append("\n");
+            }
+        }
+        System.out.print(sb);
     }
 }
