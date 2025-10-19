@@ -1,0 +1,24 @@
+WITH 2022_SCORES AS (
+    SELECT
+        EMP_NO,
+        SUM(SCORE) AS SCORE,
+        RANK() OVER (ORDER BY SUM(SCORE) DESC) AS rnk
+    FROM
+        HR_GRADE
+    WHERE
+        YEAR = 2022
+    GROUP BY
+        EMP_NO
+)
+
+SELECT
+    S.SCORE,
+    E.EMP_NO,
+    E.EMP_NAME,
+    E.POSITION,
+    E.EMAIL
+FROM
+    HR_EMPLOYEES AS E
+JOIN
+    2022_SCORES AS S ON E.EMP_NO = S.EMP_NO
+LIMIT 1;
