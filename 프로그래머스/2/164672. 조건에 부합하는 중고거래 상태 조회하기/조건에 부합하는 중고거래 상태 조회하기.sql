@@ -15,7 +15,6 @@ SELECT
         WHEN STATUS = 'RESERVED' THEN '예약중'
         WHEN STATUS = 'DONE' THEN '거래완료'
     END AS '거래상태'
-
 FROM
     USED_GOODS_BOARD
 WHERE
